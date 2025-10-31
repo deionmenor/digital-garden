@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const gardenNotes = (await getCollection('garden'))
+  .filter(note => !note.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort();
+---
+
+<BaseLayout title="Digital Garden" description="Explore my growing collection of notes and thoughts">
+  <div class="header">
+    <h1>Digital Garden</h1>
+    <p class="subtitle">
+      A collection of evolving notes, ideas, and thoughts. These are living documents that
+      grow and change over time.
+    </p>
+  </div>
+
+  {allTags.length > 0 && (
+    <div class="tags-filter">
+      <div class="tags">
+        {allTags.map(tag => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {gardenNotes.length > 0 ? (
+    <div class="cards">
+      {gardenNotes.map(note => (
+        <a href={`/garden/${note.slug}`} class="card">
+          <h3>{note.data.title}</h3>
+          {note.data.description && <p>{note.data.description}</p>}
+          <div class="meta">
+            <span>
+              {note.data.date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </span>
+            {note.data.updated && (
+              <span class="updated">
+                Updated: {note.data.updated.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </span>
+            )}
+          </div>
+          {note.data.tags.length > 0 && (
+            <div class="tags">
+              {note.data.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="empty-state">
+      <p>No notes in the garden yet. Plant your first seed!</p>
+      <p class="hint">
+        Add markdown files to <code>src/content/garden/</code> to get started.
+      </p>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+
+  .tags-filter {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--color-hover);
+    border-radius: 8px;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card {
+    display: block;
+    color: var(--color-text);
+  }
+
+  .meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .updated {
+    color: var(--color-accent);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--color-text-muted);
+  }
+
+  .empty-state p {
+    margin-bottom: 0.5rem;
+  }
+
+  .hint {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+</style>

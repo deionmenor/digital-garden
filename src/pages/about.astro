@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About Me" description="Learn more about me and this digital garden">
+  <article class="prose">
+    <h1>About Me</h1>
+
+    <p>
+      Welcome to my digital garden! This is a space where I cultivate and share my thoughts,
+      ideas, and learnings as they grow and evolve over time.
+    </p>
+
+    <h2>What is a Digital Garden?</h2>
+
+    <p>
+      Unlike a traditional blog where posts are polished and published once, a digital garden
+      is a collection of evolving notes and ideas. Think of it as a public notebook where
+      thoughts are planted as seeds, tended to over time, and allowed to grow organically.
+    </p>
+
+    <p>
+      Notes in my garden are works in progress. They may be incomplete, experimental, or
+      constantly evolving. This approach allows for more exploration and less pressure to
+      have everything perfectly formed before sharing.
+    </p>
+
+    <h2>About This Site</h2>
+
+    <p>
+      This website is built with Astro.js and designed with simplicity and readability in mind.
+      It features:
+    </p>
+
+    <ul>
+      <li><strong>Digital Garden:</strong> Evergreen notes and thoughts that evolve over time</li>
+      <li><strong>Blog:</strong> More traditional, finished articles and posts</li>
+      <li><strong>Clean Design:</strong> Inspired by Notion and Claude's minimal aesthetic</li>
+    </ul>
+
+    <h2>Connect</h2>
+
+    <p>
+      Feel free to explore, and if you'd like to connect, you can find me at:
+    </p>
+
+    <ul>
+      <li>Email: your@email.com</li>
+      <li>GitHub: yourusername</li>
+      <li>Twitter: @yourusername</li>
+    </ul>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 65ch;
+  }
+
+  .prose h1 {
+    margin-bottom: 2rem;
+  }
+
+  .prose h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose ul {
+    list-style: disc;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+</style>
