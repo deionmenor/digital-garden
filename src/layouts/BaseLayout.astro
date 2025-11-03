@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "My digital garden and blog" } = Astro.props;
+const { title, description = "My digital garden and writings" } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,17 +17,35 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      // Prevent theme flash by applying theme before render
+      (function() {
+        const theme = localStorage.getItem('theme-preference');
+        if (theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
     <title>{title}</title>
   </head>
   <body>
     <nav class="nav">
       <div class="nav-container">
-        <a href="/" class="nav-logo">Home</a>
+        <a href="/" class="nav-logo">Deion Menor</a>
         <div class="nav-right">
           <div class="nav-links">
             <a href="/about">About</a>
             <a href="/garden">Digital Garden</a>
-            <a href="/blog">Blog</a>
+            <a href="/writings">Writings</a>
             <a href="/projects">Projects</a>
           </div>
           <ThemeToggle />
@@ -45,35 +63,50 @@ const { title, description = "My digital garden and blog" } = Astro.props;
 
 <style is:global>
   :root {
-    --color-bg: #ffffff;
-    --color-text: #1f1f1f;
-    --color-text-muted: #6b6b6b;
-    --color-border: #e8e8e8;
-    --color-hover: #f7f7f7;
-    --color-accent: #2e7d32;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    /* Flexoki Light Theme */
+    --color-bg: #FFFCF0;
+    --color-text: #100F0F;
+    --color-text-muted: #6F6E69;
+    --color-border: #CECDC3;
+    --color-hover: #F2F0E5;
+    --color-card: #FDFDF8;
+    --color-accent: #4385BE;
+    --color-primary: #D14D41;
+    --color-primary-rgb: 209, 77, 65;
+    --color-secondary: #879A39;
+    --font-sans: 'Neuton', serif;
     --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
     --max-width: 720px;
     --spacing: 1rem;
   }
 
   [data-theme="dark"] {
-    --color-bg: #1a1a1a;
-    --color-text: #e8e8e8;
-    --color-text-muted: #9b9b9b;
-    --color-border: #2d2d2d;
-    --color-hover: #252525;
-    --color-accent: #4caf50;
+    /* Flexoki Dark Theme */
+    --color-bg: #100F0F;
+    --color-text: #CECDC3;
+    --color-text-muted: #878580;
+    --color-border: #282726;
+    --color-hover: #1C1B1A;
+    --color-card: #141312;
+    --color-accent: #4385BE;
+    --color-primary: #D14D41;
+    --color-primary-rgb: 209, 77, 65;
+    --color-secondary: #879A39;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
-      --color-bg: #1a1a1a;
-      --color-text: #e8e8e8;
-      --color-text-muted: #9b9b9b;
-      --color-border: #2d2d2d;
-      --color-hover: #252525;
-      --color-accent: #4caf50;
+      /* Flexoki Dark Theme */
+      --color-bg: #100F0F;
+      --color-text: #CECDC3;
+      --color-text-muted: #878580;
+      --color-border: #282726;
+      --color-hover: #1C1B1A;
+      --color-card: #141312;
+      --color-accent: #4385BE;
+      --color-primary: #D14D41;
+      --color-primary-rgb: 209, 77, 65;
+      --color-secondary: #879A39;
     }
   }
 
@@ -89,6 +122,8 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     color: var(--color-text);
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
 
   body {
@@ -220,14 +255,23 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     padding: 1.5rem;
     margin-bottom: 1rem;
     transition: background-color 0.2s;
+    text-decoration: none;
+    background: var(--color-bg);
   }
 
   .card:hover {
     background: var(--color-hover);
+    text-decoration: none;
   }
 
   .card h3 {
     margin-bottom: 0.5rem;
+  }
+
+  .card h3,
+  .card p,
+  .card * {
+    text-decoration: none;
   }
 
   .card p {

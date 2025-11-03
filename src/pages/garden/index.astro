@@ -11,22 +11,14 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
 
 <BaseLayout title="Digital Garden" description="Explore my growing collection of notes and thoughts">
   <div class="header">
-    <div class="header-content">
-      <div>
-        <h1>Digital Garden</h1>
-        <p class="subtitle">
-          A collection of evolving notes, ideas, and thoughts. These are living documents that
-          grow and change over time.
-        </p>
-      </div>
-      <button id="layoutToggle" class="layout-toggle" aria-label="Toggle layout">
-        <span class="toggle-icon">⊞</span>
-        <span class="toggle-text">Masonry</span>
-      </button>
-    </div>
+    <h1>Digital Garden</h1>
+    <p class="subtitle">
+      A collection of evolving notes, ideas, and thoughts. These are living documents that
+      grow and change over time.
+    </p>
   </div>
 
-  <div class="search-container">
+  <div class="controls">
     <input
       type="text"
       id="searchInput"
@@ -34,17 +26,11 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
       placeholder="Search notes..."
       aria-label="Search notes"
     />
+    <button id="layoutToggle" class="layout-toggle" aria-label="Toggle layout">
+      <span class="toggle-icon">⊞</span>
+      <span class="toggle-text">Masonry</span>
+    </button>
   </div>
-
-  {allTags.length > 0 && (
-    <div class="tags-filter">
-      <div class="tags">
-        {allTags.map(tag => (
-          <span class="tag">{tag}</span>
-        ))}
-      </div>
-    </div>
-  )}
 
   {gardenNotes.length > 0 ? (
     <div class="cards" id="cardsContainer">
@@ -131,49 +117,21 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
     margin-bottom: 2rem;
   }
 
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
   .subtitle {
     color: var(--color-text-muted);
     font-size: 1.1rem;
     margin-top: 0.5rem;
   }
 
-  .layout-toggle {
+  .controls {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--color-hover);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    color: var(--color-text);
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .layout-toggle:hover {
-    background: var(--color-border);
-  }
-
-  .toggle-icon {
-    font-size: 1.1rem;
-  }
-
-  .search-container {
+    gap: 1rem;
     margin-bottom: 2rem;
+    align-items: center;
   }
 
   .search-input {
-    width: 100%;
+    flex: 1;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     border: 1px solid var(--color-border);
@@ -193,11 +151,28 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
     color: var(--color-text-muted);
   }
 
-  .tags-filter {
-    margin-bottom: 2rem;
-    padding: 1rem;
+  .layout-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
     background: var(--color-hover);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .layout-toggle:hover {
+    background: var(--color-border);
+  }
+
+  .toggle-icon {
+    font-size: 1.1rem;
   }
 
   /* List layout (default) */
@@ -285,9 +260,8 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
       column-count: 1;
     }
 
-    .header-content {
+    .controls {
       flex-direction: column;
-      align-items: stretch;
     }
 
     .layout-toggle {
