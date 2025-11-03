@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: "Task Management System",
+    techStack: ["React", "Node.js", "PostgreSQL", "Docker"],
+    description: "A collaborative task management platform with real-time updates and team workspaces."
+  },
+  {
+    name: "AI Content Analyzer",
+    techStack: ["Python", "FastAPI", "TensorFlow", "Redis"],
+    description: "Machine learning pipeline for analyzing and categorizing large volumes of text content."
+  },
+  {
+    name: "E-commerce API Gateway",
+    techStack: ["Go", "GraphQL", "MongoDB", "Kubernetes"],
+    description: "High-performance API gateway handling millions of requests with built-in rate limiting and caching."
+  }
+];
+---
+
+<BaseLayout title="Projects" description="Explore my projects and work">
+  <div class="header">
+    <h1>Projects</h1>
+    <p class="subtitle">
+      A collection of projects I've built, experimenting with different technologies and ideas.
+    </p>
+  </div>
+
+  <div class="projects-grid">
+    {projects.map(project => (
+      <div class="project-card">
+        <h3>{project.name}</h3>
+        <div class="tech-stack">
+          {project.techStack.map(tech => (
+            <span class="tech-tag">{tech}</span>
+          ))}
+        </div>
+        <p>{project.description}</p>
+      </div>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .header {
+    margin-bottom: 3rem;
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .project-card {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.2s;
+    background: var(--color-bg);
+  }
+
+  .project-card:hover {
+    background: var(--color-hover);
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .project-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .tech-tag {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .project-card p {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
