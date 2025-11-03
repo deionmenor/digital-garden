@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@neodrag/react": "^2.3.1",
+    "@neodrag/vanilla": "^2.3.1",
     "astro": "^5.15.3"
   }
 }

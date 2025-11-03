@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Drag Test" description="Testing neodrag functionality">
+  <div class="test-container">
+    <h1>Drag Test</h1>
+    <p>The card below should be draggable within the container.</p>
+
+    <div class="drag-area" id="dragArea">
+      <div class="draggable-card" id="testCard">
+        Drag me!
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { Draggable } from '@neodrag/vanilla';
+
+  const card = document.getElementById('testCard');
+  const dragArea = document.getElementById('dragArea');
+
+  if (card && dragArea) {
+    new Draggable(card, {
+      bounds: 'parent',
+      handle: card
+    });
+    console.log('Draggable initialized');
+  }
+</script>
+
+<style>
+  .test-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .test-container h1 {
+    margin-bottom: 1rem;
+  }
+
+  .test-container p {
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .drag-area {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background-color: var(--color-bg);
+    background-image: radial-gradient(circle, var(--color-text-muted) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .draggable-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    background: var(--color-card);
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-text);
+    user-select: none;
+  }
+
+  .draggable-card:active {
+    cursor: grabbing;
+  }
+
+  .draggable-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+</style>
