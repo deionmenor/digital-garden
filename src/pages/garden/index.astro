@@ -26,6 +26,16 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
     </div>
   </div>
 
+  <div class="search-container">
+    <input
+      type="text"
+      id="searchInput"
+      class="search-input"
+      placeholder="Search notes..."
+      aria-label="Search notes"
+    />
+  </div>
+
   {allTags.length > 0 && (
     <div class="tags-filter">
       <div class="tags">
@@ -75,6 +85,7 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
   const toggle = document.getElementById('layoutToggle');
   const container = document.getElementById('cardsContainer');
   const toggleText = toggle?.querySelector('.toggle-text');
+  const searchInput = document.getElementById('searchInput');
 
   // Load saved preference
   const savedLayout = localStorage.getItem('gardenLayout') || 'list';
@@ -88,6 +99,30 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
     const newLayout = isMasonry ? 'masonry' : 'list';
     localStorage.setItem('gardenLayout', newLayout);
     if (toggleText) toggleText.textContent = isMasonry ? 'List' : 'Masonry';
+  });
+
+  // Search functionality
+  searchInput?.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    const cards = container?.querySelectorAll('.card');
+
+    cards?.forEach((card) => {
+      const title = card.querySelector('h3')?.textContent?.toLowerCase() || '';
+      const description = card.querySelector('p')?.textContent?.toLowerCase() || '';
+      const tags = Array.from(card.querySelectorAll('.tag'))
+        .map(tag => tag.textContent?.toLowerCase() || '')
+        .join(' ');
+
+      const matches = title.includes(searchTerm) ||
+                     description.includes(searchTerm) ||
+                     tags.includes(searchTerm);
+
+      if (matches || searchTerm === '') {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
   });
 </script>
 
@@ -131,6 +166,31 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
 
   .toggle-icon {
     font-size: 1.1rem;
+  }
+
+  .search-container {
+    margin-bottom: 2rem;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
   }
 
   .tags-filter {
