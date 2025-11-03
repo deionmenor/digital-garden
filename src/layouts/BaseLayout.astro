@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from '../components/ThemeToggle.astro';
+
 interface Props {
   title: string;
   description?: string;
@@ -21,10 +23,13 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     <nav class="nav">
       <div class="nav-container">
         <a href="/" class="nav-logo">Home</a>
-        <div class="nav-links">
-          <a href="/about">About</a>
-          <a href="/garden">Digital Garden</a>
-          <a href="/blog">Blog</a>
+        <div class="nav-right">
+          <div class="nav-links">
+            <a href="/about">About</a>
+            <a href="/garden">Digital Garden</a>
+            <a href="/blog">Blog</a>
+          </div>
+          <ThemeToggle />
         </div>
       </div>
     </nav>
@@ -51,8 +56,17 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     --spacing: 1rem;
   }
 
+  [data-theme="dark"] {
+    --color-bg: #1a1a1a;
+    --color-text: #e8e8e8;
+    --color-text-muted: #9b9b9b;
+    --color-border: #2d2d2d;
+    --color-hover: #252525;
+    --color-accent: #4caf50;
+  }
+
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme]) {
       --color-bg: #1a1a1a;
       --color-text: #e8e8e8;
       --color-text-muted: #9b9b9b;
@@ -73,6 +87,7 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   body {
@@ -113,9 +128,16 @@ const { title, description = "My digital garden and blog" } = Astro.props;
     text-decoration: none;
   }
 
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .nav-links {
     display: flex;
     gap: 1.5rem;
+    align-items: center;
   }
 
   .nav-links a {
