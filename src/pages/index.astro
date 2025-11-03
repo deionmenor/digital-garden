@@ -166,9 +166,15 @@ const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
   }
 
   .cards {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
   }
 
   .card {

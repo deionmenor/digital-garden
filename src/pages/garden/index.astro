@@ -11,11 +11,19 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
 
 <BaseLayout title="Digital Garden" description="Explore my growing collection of notes and thoughts">
   <div class="header">
-    <h1>Digital Garden</h1>
-    <p class="subtitle">
-      A collection of evolving notes, ideas, and thoughts. These are living documents that
-      grow and change over time.
-    </p>
+    <div class="header-content">
+      <div>
+        <h1>Digital Garden</h1>
+        <p class="subtitle">
+          A collection of evolving notes, ideas, and thoughts. These are living documents that
+          grow and change over time.
+        </p>
+      </div>
+      <button id="layoutToggle" class="layout-toggle" aria-label="Toggle layout">
+        <span class="toggle-icon">⊞</span>
+        <span class="toggle-text">Masonry</span>
+      </button>
+    </div>
   </div>
 
   {allTags.length > 0 && (
@@ -29,7 +37,7 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
   )}
 
   {gardenNotes.length > 0 ? (
-    <div class="cards">
+    <div class="cards" id="cardsContainer">
       {gardenNotes.map(note => (
         <a href={`/garden/${note.slug}`} class="card">
           <h3>{note.data.title}</h3>
@@ -38,19 +46,10 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
             <span>
               {note.data.date.toLocaleDateString('en-US', {
                 year: 'numeric',
-                month: 'long',
+                month: 'short',
                 day: 'numeric'
               })}
             </span>
-            {note.data.updated && (
-              <span class="updated">
-                Updated: {note.data.updated.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
-              </span>
-            )}
           </div>
           {note.data.tags.length > 0 && (
             <div class="tags">
@@ -72,15 +71,66 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
   )}
 </BaseLayout>
 
+<script>
+  const toggle = document.getElementById('layoutToggle');
+  const container = document.getElementById('cardsContainer');
+  const toggleText = toggle?.querySelector('.toggle-text');
+
+  // Load saved preference
+  const savedLayout = localStorage.getItem('gardenLayout') || 'list';
+  if (savedLayout === 'masonry') {
+    container?.classList.add('masonry');
+    if (toggleText) toggleText.textContent = 'List';
+  }
+
+  toggle?.addEventListener('click', () => {
+    const isMasonry = container?.classList.toggle('masonry');
+    const newLayout = isMasonry ? 'masonry' : 'list';
+    localStorage.setItem('gardenLayout', newLayout);
+    if (toggleText) toggleText.textContent = isMasonry ? 'List' : 'Masonry';
+  });
+</script>
+
 <style>
   .header {
     margin-bottom: 2rem;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .subtitle {
     color: var(--color-text-muted);
     font-size: 1.1rem;
     margin-top: 0.5rem;
+  }
+
+  .layout-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .layout-toggle:hover {
+    background: var(--color-border);
+  }
+
+  .toggle-icon {
+    font-size: 1.1rem;
   }
 
   .tags-filter {
@@ -90,21 +140,64 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
     border-radius: 8px;
   }
 
+  /* List layout (default) */
   .cards {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 0 2rem;
+  }
+
+  /* Masonry layout */
+  .cards.masonry {
+    display: block;
+    column-count: 3;
+    column-gap: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .cards.masonry {
+      column-count: 4;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cards.masonry {
+      column-count: 2;
+    }
+  }
+
+  .cards.masonry .card {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1rem;
   }
 
   .card {
     display: block;
     color: var(--color-text);
+    break-inside: avoid;
+  }
+
+  /* Smaller cards */
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
   }
 
   .meta {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    font-size: 0.85rem;
   }
 
   .updated {
@@ -124,5 +217,22 @@ const allTags = [...new Set(gardenNotes.flatMap(note => note.data.tags))].sort()
   .hint {
     font-size: 0.9rem;
     margin-top: 1rem;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .cards.masonry {
+      column-count: 1;
+    }
+
+    .header-content {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .layout-toggle {
+      width: 100%;
+      justify-content: center;
+    }
   }
 </style>
