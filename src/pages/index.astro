@@ -1,41 +1,44 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { getTopicEmoji } from '../data/topicEmojis';
 
 const recentGardenNotes = (await getCollection('garden'))
   .filter(note => !note.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const recentBlogPosts = (await getCollection('blog'))
+const recentWritings = (await getCollection('writings'))
   .filter(post => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-// Collect all unique tags from both garden and blog
+// Collect all unique tags from both garden and writings
 const allGardenNotes = await getCollection('garden');
-const allBlogPosts = await getCollection('blog');
-const allContent = [...allGardenNotes, ...allBlogPosts].filter(item => !item.data.draft);
+const allWritings = await getCollection('writings');
+const allContent = [...allGardenNotes, ...allWritings].filter(item => !item.data.draft);
 const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
+
+// Create topic data with emojis
+const topicsWithEmojis = allTags.map(tag => ({
+  name: tag,
+  emoji: getTopicEmoji(tag)
+}));
 ---
 
 <BaseLayout title="Home - My Digital Garden">
-  <div class="hero">
-    <h1>Welcome to My Digital Garden</h1>
-    <p class="hero-description">
-      A space for growing ideas, thoughts, and knowledge. Explore my notes and blog posts.
-    </p>
-  </div>
-
-  {allTags.length > 0 && (
-    <div class="tags-section">
-      <div class="tags-pills">
-        {allTags.map(tag => (
-          <span class="tag-pill">{tag}</span>
-        ))}
-      </div>
+  <div class="hero-card">
+    <div class="hero">
+      <h1>
+        <span class="hero-main-text">Deion writes about</span>
+        <span class="topic-container"><span id="rotating-topic" class="rotating-topic"></span><span id="rotating-emoji" class="rotating-emoji"></span></span>
+      </h1>
+      <p class="hero-description">
+        This is a space for my growing ideas and thoughts.
+        Explore my curated digital garden of essays, notes, and other musings
+      </p>
     </div>
-  )}
+  </div>
 
   <section class="section">
     <div class="section-header">
@@ -72,13 +75,13 @@ const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
 
   <section class="section">
     <div class="section-header">
-      <h2>Recent Blog Posts</h2>
-      <a href="/blog">View all →</a>
+      <h2>Recent Writings</h2>
+      <a href="/writings">View all →</a>
     </div>
-    {recentBlogPosts.length > 0 ? (
+    {recentWritings.length > 0 ? (
       <div class="cards">
-        {recentBlogPosts.map(post => (
-          <a href={`/blog/${post.slug}`} class="card">
+        {recentWritings.map(post => (
+          <a href={`/writings/${post.slug}`} class="card">
             <h3>{post.data.title}</h3>
             <p>{post.data.description}</p>
             <div class="meta">
@@ -99,20 +102,113 @@ const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
         ))}
       </div>
     ) : (
-      <p class="empty-state">No blog posts yet. Check back soon!</p>
+      <p class="empty-state">No writings yet. Check back soon!</p>
     )}
+  </section>
+
+  <section class="section cta-section">
+    <div class="cta-container">
+      <h2>Let's Connect</h2>
+      <p class="cta-description">
+        Interested in discussing ideas, collaborating on projects, or just having a chat?
+        I'd love to hear from you.
+      </p>
+      <a
+        href="#"
+        class="cta-button"
+        id="calendly-button"
+      >
+        Schedule time with me
+      </a>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
+  .hero-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
   .hero {
     text-align: center;
-    padding: 4rem 0 3rem;
-    margin-bottom: 2rem;
   }
 
   .hero h1 {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-size: 3.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .hero-main-text {
+    display: block;
+  }
+
+  .topic-container {
+    display: inline-block;
+    background-color: rgba(var(--color-primary-rgb, 99, 102, 241), 0.1);
+    border: 2px solid rgba(var(--color-primary-rgb, 99, 102, 241), 0.3);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    white-space: nowrap;
+  }
+
+  .rotating-topic {
+    display: inline;
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+
+  .rotating-emoji {
+    display: inline;
+    font-size: 1em;
+    margin-left: 0;
+  }
+
+  .rotating-topic.fade-out,
+  .rotating-emoji.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+  }
+
+  .rotating-topic.fade-in,
+  .rotating-emoji.fade-in {
+    animation: fadeIn 0.3s ease-in forwards;
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .hero-description {
@@ -120,34 +216,6 @@ const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
     color: var(--color-text-muted);
     max-width: 600px;
     margin: 0 auto;
-  }
-
-  .tags-section {
-    margin-bottom: 4rem;
-  }
-
-  .tags-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .tag-pill {
-    background: var(--color-hover);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    transition: all 0.2s ease;
-    cursor: default;
-  }
-
-  .tag-pill:hover {
-    background: var(--color-border);
-    transform: translateY(-1px);
   }
 
   .section {
@@ -188,4 +256,104 @@ const allTags = [...new Set(allContent.flatMap(item => item.data.tags))].sort();
     padding: 2rem;
     font-style: italic;
   }
+
+  .cta-section {
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+  }
+
+  .cta-container {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .cta-container h2 {
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .cta-description {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background: var(--color-primary);
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-button:hover {
+    background: var(--color-accent);
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 </style>
+
+<script define:vars={{ topicsWithEmojis }}>
+  const topics = topicsWithEmojis.length > 0 ? topicsWithEmojis : [{ name: 'everything', emoji: '📌' }];
+  const topicElement = document.getElementById('rotating-topic');
+  const emojiElement = document.getElementById('rotating-emoji');
+  let currentIndex = 0;
+
+  function updateTopic() {
+    // Fade out both elements
+    topicElement.classList.remove('fade-in');
+    topicElement.classList.add('fade-out');
+    emojiElement.classList.remove('fade-in');
+    emojiElement.classList.add('fade-out');
+
+    setTimeout(() => {
+      // Update text and emoji
+      currentIndex = (currentIndex + 1) % topics.length;
+      topicElement.textContent = topics[currentIndex].name;
+      emojiElement.textContent = topics[currentIndex].emoji;
+
+      // Fade in both elements
+      topicElement.classList.remove('fade-out');
+      topicElement.classList.add('fade-in');
+      emojiElement.classList.remove('fade-out');
+      emojiElement.classList.add('fade-in');
+    }, 300);
+  }
+
+  // Set initial topic and emoji
+  if (topics.length > 0) {
+    topicElement.textContent = topics[0].name;
+    emojiElement.textContent = topics[0].emoji;
+    topicElement.classList.add('fade-in');
+    emojiElement.classList.add('fade-in');
+  }
+
+  // Rotate every 5 seconds
+  setInterval(updateTopic, 5000);
+</script>
+
+<script>
+  // Calendly popup initialization
+  const calendlyButton = document.getElementById('calendly-button');
+
+  calendlyButton?.addEventListener('click', (e) => {
+    e.preventDefault();
+    // @ts-ignore - Calendly is loaded globally
+    if (typeof Calendly !== 'undefined') {
+      // @ts-ignore
+      Calendly.initPopupWidget({ url: 'https://calendly.com/deionmenor-kq43/chat-with-deion' });
+    }
+  });
+</script>

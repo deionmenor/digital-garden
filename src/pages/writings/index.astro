@@ -2,18 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const blogPosts = (await getCollection('blog'))
+const writings = (await getCollection('writings'))
   .filter(post => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const allTags = [...new Set(blogPosts.flatMap(post => post.data.tags))].sort();
+const allTags = [...new Set(writings.flatMap(post => post.data.tags))].sort();
 ---
 
-<BaseLayout title="Blog" description="Read my latest articles and thoughts">
+<BaseLayout title="Writings" description="Read my latest articles and thoughts">
   <div class="header">
-    <h1>Blog</h1>
+    <h1>Writings</h1>
     <p class="subtitle">
-      Articles, tutorials, and thoughts on software development, technology, and more.
+      Articles, essays, and thoughts on software development, technology, and more.
     </p>
   </div>
 
@@ -22,25 +22,15 @@ const allTags = [...new Set(blogPosts.flatMap(post => post.data.tags))].sort();
       type="text"
       id="searchInput"
       class="search-input"
-      placeholder="Search blog posts..."
-      aria-label="Search blog posts"
+      placeholder="Search writings..."
+      aria-label="Search writings"
     />
   </div>
 
-  {allTags.length > 0 && (
-    <div class="tags-filter">
-      <div class="tags">
-        {allTags.map(tag => (
-          <span class="tag">{tag}</span>
-        ))}
-      </div>
-    </div>
-  )}
-
-  {blogPosts.length > 0 ? (
+  {writings.length > 0 ? (
     <div class="cards" id="cardsContainer">
-      {blogPosts.map(post => (
-        <a href={`/blog/${post.slug}`} class="card">
+      {writings.map(post => (
+        <a href={`/writings/${post.slug}`} class="card">
           {post.data.coverImage && (
             <div class="cover-image">
               <img src={post.data.coverImage} alt={post.data.title} />
@@ -69,9 +59,9 @@ const allTags = [...new Set(blogPosts.flatMap(post => post.data.tags))].sort();
     </div>
   ) : (
     <div class="empty-state">
-      <p>No blog posts yet. Check back soon for new content!</p>
+      <p>No writings yet. Check back soon for new content!</p>
       <p class="hint">
-        Add markdown files to <code>src/content/blog/</code> to get started.
+        Add markdown files to <code>src/content/writings/</code> to get started.
       </p>
     </div>
   )}
@@ -140,13 +130,6 @@ const allTags = [...new Set(blogPosts.flatMap(post => post.data.tags))].sort();
 
   .search-input::placeholder {
     color: var(--color-text-muted);
-  }
-
-  .tags-filter {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: var(--color-hover);
-    border-radius: 8px;
   }
 
   .cards {
